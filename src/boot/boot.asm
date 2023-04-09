@@ -86,7 +86,8 @@ load_kernel:						; Load our kernel into memory and jump to it
 	mov ecx, 100					; ecx will contain the total number of sectors we want to load
 	mov edi, 0x0100000				; edi will contain the address we want to load these sectors in to (1 MB)
 	call ata_lba_read				; ata_lba_read is the function that will talk with the drive and load the disk sectors into memory
-	jmp CODE_SEG:0x0100000 			; jump to 1 MB which is the location where we've read the kernel sectors into memory
+	call CODE_SEG:0x0100000 		; call main() where it was read into memory
+    jmp $                           ; catch with infinite loop if kernel returns
 
 ata_lba_read:
 	mov ebx, eax 					; backup the logical block address (starting sector) 

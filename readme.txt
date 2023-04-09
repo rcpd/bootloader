@@ -28,17 +28,16 @@ make all-gcc
 make all-target-libgcc
 make install-gcc
 make install-target-libgcc
-// export PATH="$HOME/opt/cross/bin:$PATH" >> ~/.profile
-// source ~/.profile
-i686-elf-gcc --version
+printf 'export PATH="$HOME/opt/cross/bin:$PATH"\n' >> ~/.profile
 
 # compile bootloader
-make
+source ~/.profile && make
 
 # run (multi-pane: ctrl+b, % // ctrl+b, <- or ->)
 tmux
 
 # open gdbserver on tcp 1234, don't start CPU yet (terminal 1)
+# VGA Blank mode = successly loaded, alt+2: quit to exit
 qemu-system-i386 -s -S -curses -drive file=bin/disk.img,index=0,media=disk,format=raw
 
 # gdb (terminal 2)
@@ -49,9 +48,14 @@ add-symbol-file build/kernel.o 0x100000
 target remote localhost:1234
 
 # set bp, continue, step through
-b kernel_main
+b main
 c
-n, n, n
-info locals
+n
+
+# "SeaBios" will now read "XeaBios" if successful
+
+# alternatively to run without debugging:
+qemu-system-i386 -s -curses -drive file=bin/disk.img,index=0,media=disk,format=raw
+
 
 
