@@ -1,4 +1,5 @@
 # abridged steps from https://www.ryanstan.com/assmToC.html
+# VGA driver code: https://dev.to/frosnerd/writing-my-own-vga-driver-22nn
 
 # install gcc + dependencies, qemu, nasm, gdb, tmux
 sudo apt install build-essential bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo
@@ -36,26 +37,22 @@ source ~/.profile && make
 # run (multi-pane: ctrl+b, % // ctrl+b, <- or ->)
 tmux
 
-# open gdbserver on tcp 1234, don't start CPU yet (terminal 1)
+# qemu: load disk but don't start CPU yet (terminal 1)
 # VGA Blank mode = successly loaded, alt+2: quit to exit
-qemu-system-i386 -s -S -curses -drive file=bin/disk.img,index=0,media=disk,format=raw
+make debug
 
-# gdb (terminal 2)
-gdb
-
-# load symbols, specify text section address
-add-symbol-file build/kernel.o 0x100000
-target remote localhost:1234
+# gdb: connect to remote and load symbols (terminal 2)
+gdb -ex "target remote localhost:1234" -ex "add-symbol-file bin/kernel.elf 0x100000"
 
 # set bp, continue, step through
 b main
 c
 n
 
-# "SeaBios" will now read "XeaBios" if successful
+# Screen will now read "Hello World!" if successful
 
 # alternatively to run without debugging:
-qemu-system-i386 -s -curses -drive file=bin/disk.img,index=0,media=disk,format=raw
+make run
 
 
 

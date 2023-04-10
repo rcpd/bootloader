@@ -46,8 +46,16 @@ $(OBJDIR)/%.o: %.c
 	i686-elf-gcc $(FLAGS) -c $< -o $@
 
 run:
-	qemu-system-i386 -drive file=bin/disk.img,index=0,media=disk,format=raw
+	qemu-system-i386 -s -curses -drive file=bin/disk.img,index=0,media=disk,format=raw
 
 clean:
 	rm -rf bin/*
 	rm -rf build/*
+
+# debug
+
+bin/kernel.elf: $(OBJDIR)/kernel.o $(OBJECTS)
+	x86_64-linux-gnu-ld -m elf_i386 -o $@ -Ttext 0x1000 $^
+
+debug: bin/disk.img bin/kernel.elf
+	qemu-system-i386 -s -S -curses -drive file=bin/disk.img,index=0,media=disk,format=raw
