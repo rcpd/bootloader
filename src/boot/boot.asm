@@ -1,7 +1,7 @@
 ; Intel syntax
 
-ORG 0x7c00				; This is where the program expects to be loaded into memory
-BITS 16					; Tells the assembler we are using a 16 bit architecture
+[org 0x7c00]			; This is where the program expects to be loaded into memory
+[bits 16]				; Tells the assembler we are using a 16 bit architecture
 
 CODE_SEG equ gdt_code - gdt_start	; EQU is a NASM psuedo instruction that gives a symbol (CODE_SEG) a corresponding value (gdt_code - gdt_start)
 DATA_SEG equ gdt_data - gdt_start	; These symbols will be used to give us our offsets into the GDT for the respective segment descriptors
@@ -62,7 +62,7 @@ gdt_descriptor:				; This is the GDT description structure that will be used by 
 	dw gdt_end - gdt_start - 1	; Size
 	dd gdt_start			; Offset - linear address of the GDT itself
 
-[BITS 32]				; all code below here is seen as 32-bit code.  The brackets indicate a primitive directive
+[bits 32]				; all code below here is seen as 32-bit code.  The brackets indicate a primitive directive
 
 load32:
 	mov ax, DATA_SEG	
